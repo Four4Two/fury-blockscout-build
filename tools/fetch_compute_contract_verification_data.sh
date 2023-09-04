@@ -1,7 +1,7 @@
 #!/bin/bash
 # fetches or computes data needed for forced contract verification
-# using process defined in https://kava-labs.atlassian.net/wiki/spaces/ENG/pages/1290829828/Blockscout+Manual+Contract+Verification+Fixes
-# run like ./fetch_compute_contract_verification_data.sh https://evm.kava.io 0xD0b97bd475f53767DBc7aDcD70f499000Edc916C
+# using process defined in https://fury-labs.atlassian.net/wiki/spaces/ENG/pages/1290829828/Blockscout+Manual+Contract+Verification+Fixes
+# run like ./fetch_compute_contract_verification_data.sh https://evm.fury.io 0xD0b97bd475f53767DBc7aDcD70f499000Edc916C
 
 # log all commands and values used by the script return code
 # set -x
@@ -12,7 +12,7 @@ Decode_hex_to_utf8_Return_Val=   # Global variable to hold return value of funct
 decode_hex_to_utf8 () {
     decode_hex_to_utf8_sql="select * from decode('$1', 'hex');"
 
-    utf8=$(AWS_PROFILE=production aws rds-data execute-statement --secret-arn arn:aws:secretsmanager:us-east-1:830681326651:secret:blockscout-kava-10-creds-2-vHdYae --resource-arn arn:aws:rds:us-east-1:830681326651:cluster:blockscout-kava-10 --sql "$decode_hex_to_utf8_sql" --database blockscout_kava_10 | jq -r .records[0][0].blobValue)
+    utf8=$(AWS_PROFILE=production aws rds-data execute-statement --secret-arn arn:aws:secretsmanager:us-east-1:830681326651:secret:blockscout-fury-10-creds-2-vHdYae --resource-arn arn:aws:rds:us-east-1:830681326651:cluster:blockscout-fury-10 --sql "$decode_hex_to_utf8_sql" --database blockscout_fury_10 | jq -r .records[0][0].blobValue)
 
     Decode_hex_to_utf8_Return_Val=$utf8
 
@@ -20,12 +20,12 @@ decode_hex_to_utf8 () {
 }
 
 # parse command line flags
-KAVA_EVM_RPC_ENDPOINT=$1
+FURY_EVM_RPC_ENDPOINT=$1
 CONTRACT_OX_ADDRESS=$2
 
 ################ Step 1 ################
 # fetch the byte code for the contract
-response=$(curl "$KAVA_EVM_RPC_ENDPOINT" -X POST \
+response=$(curl "$FURY_EVM_RPC_ENDPOINT" -X POST \
   -H "Content-Type: application/json" \
   --data @/dev/stdin<<EOF
     {

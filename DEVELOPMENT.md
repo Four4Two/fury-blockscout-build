@@ -1,6 +1,6 @@
 # Development
 
-The goal of this document is to allow any developer to be able to quickly build, run, test, develop and debug a local version of the [Kava customized Blockscout Ethereum Explorer](https://explorer.kava.io).
+The goal of this document is to allow any developer to be able to quickly build, run, test, develop and debug a local version of the [Fury customized Blockscout Ethereum Explorer](https://explorer.fury.io).
 
 ## Setting up required toolchains
 
@@ -28,11 +28,11 @@ Install latest version of Docker and Docker compose
 Adjusting or setting of values to be used by `make`, `docker-compose` or any of the containerized applications is possible by modifying the [local environment file](./.env)
 
 ```bash
-# used by the kava docker compose service
-KAVA_CONTAINER_EVM_RPC_PORT=8545
-KAVA_HOST_EVM_RPC_PORT=8545
-KAVA_CONTAINER_COSMOS_RPC_PORT=26657
-KAVA_HOST_COSMOS_RPC_PORT=26657
+# used by the fury docker compose service
+FURY_CONTAINER_EVM_RPC_PORT=8545
+FURY_HOST_EVM_RPC_PORT=8545
+FURY_CONTAINER_COSMOS_RPC_PORT=26657
+FURY_HOST_COSMOS_RPC_PORT=26657
 
 # Used by the postgres database docker file
 PGTAP_VERSION=v1.2.0
@@ -62,9 +62,9 @@ make build
 
 ## Running
 
-### Blockscout + Postgres + Kava
+### Blockscout + Postgres + Fury
 
-Executing the below command will build and start local versions of blockscout, postgres and kava, exposing a web UI that can be viewed by opening your browser to `http://localhost:4000`
+Executing the below command will build and start local versions of blockscout, postgres and fury, exposing a web UI that can be viewed by opening your browser to `http://localhost:4000`
 
 ```bash
 make up
@@ -112,7 +112,7 @@ mix test
 
 #### Print Debugging
 
-Download the sources locally for the base version of blockscout used to build the kava customized development and production images
+Download the sources locally for the base version of blockscout used to build the fury customized development and production images
 
 ```bash
 make vendor-blockscout
@@ -144,7 +144,7 @@ Create a patch of your changes to be applied when the development or production 
 
 ```bash
 git diff > ../patches/debug.patch
-# repo base kava-blockscout-build/
+# repo base fury-blockscout-build/
 cd ../../
 # to run your debugged version of blockscout locally
 make refresh
@@ -215,13 +215,13 @@ Known issues that have caused blockscout indexing to stall
 Update values in the [local environment file](.env) to point to the archive / pruning endpoint of the network you want your local instance of Blockscout to index
 
 ```bash
-# ETHEREUM_JSONRPC_HTTP_URL=http://kava:8545
+# ETHEREUM_JSONRPC_HTTP_URL=http://fury:8545
 # uncomment below to have blockscout index public testnet
-ETHEREUM_JSONRPC_HTTP_URL=https://evm.data-testnet.kava.io
-ETHEREUM_JSONRPC_WS_URL=wss://wevm.data-testnet.kava.io
+ETHEREUM_JSONRPC_HTTP_URL=https://evm.data-testnet.fury.io
+ETHEREUM_JSONRPC_WS_URL=wss://wevm.data-testnet.fury.io
 # uncomment below to have blockscout index mainnet
-# ETHEREUM_JSONRPC_HTTP_URL=https://evm.data.kava.io
-# ETHEREUM_JSONRPC_WS_URL=wss://wevm.data.kava.io
+# ETHEREUM_JSONRPC_HTTP_URL=https://evm.data.fury.io
+# ETHEREUM_JSONRPC_WS_URL=wss://wevm.data.fury.io
 ```
 
 ```bash
@@ -236,7 +236,7 @@ Open the [Blockscout UI](http://localhost:4000) to inspect progress
 You can connect to the local postgres database started by `make up` to inspect tables and prototype queries
 
 ```bash
-⋊> ~/f/k/kava-blockscout-build on ls/deploy-blockscout-v5-upgrade ⨯ make debug-d
+⋊> ~/f/k/fury-blockscout-build on ls/deploy-blockscout-v5-upgrade ⨯ make debug-d
 atabase
 docker compose exec postgres psql -U postgres -d blockscout_testing
 psql (15.2 (Debian 15.2-1.pgdg110+1))
@@ -266,7 +266,7 @@ blockscout_testing=#
 
 ### Hotfix flow
 
-Deploy the image to ECS by updating the version tag to `hotfix` (or you can re-tag to a more specific version as desired) in the [infrastructure repo](https://github.com/Kava-Labs/infrastructure/blob/master/terraform/product/production/us-east-1/blockscout-testnet/service/terragrunt.hcl#L48) and running `AWS_PROFILE=root terragrunt apply`
+Deploy the image to ECS by updating the version tag to `hotfix` (or you can re-tag to a more specific version as desired) in the [infrastructure repo](https://github.com/Fury-Labs/infrastructure/blob/master/terraform/product/production/us-east-1/blockscout-testnet/service/terragrunt.hcl#L48) and running `AWS_PROFILE=root terragrunt apply`
 
 View the output of your debugging in the ECS console for the task started by the above `terragrunt apply` command
 
@@ -275,7 +275,7 @@ View the output of your debugging in the ECS console for the task started by the
 If you are deploying multiple hotfixes with the same tag as part of an iterative development process you can skip running `terragrunt apply` each time (after running `make hotfix-release`) by asking ECS to deploy a new version of the service - checking for and using a newer version of the image if present
 
 ```bash
-AWS_PROFILE=production aws ecs update-service --cluster blockchain-service --service blockscout-kava-10-testnet --force-new-deployment
+AWS_PROFILE=production aws ecs update-service --cluster blockchain-service --service blockscout-fury-10-testnet --force-new-deployment
 ```
 
 ### Normal release flow
@@ -286,4 +286,4 @@ To build a new image with the tag equal to the value of `PRODUCTION_IMAGE_TAG` i
 make release
 ```
 
-Deploy the image to ECS by updating the version tag to match the value of `PRODUCTION_IMAGE_TAG` in the [infrastructure repo](https://github.com/Kava-Labs/infrastructure/blob/master/terraform/product/production/us-east-1/blockscout-testnet/service/terragrunt.hcl#L48) and running `AWS_PROFILE=root terragrunt apply`
+Deploy the image to ECS by updating the version tag to match the value of `PRODUCTION_IMAGE_TAG` in the [infrastructure repo](https://github.com/Fury-Labs/infrastructure/blob/master/terraform/product/production/us-east-1/blockscout-testnet/service/terragrunt.hcl#L48) and running `AWS_PROFILE=root terragrunt apply`

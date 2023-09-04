@@ -16,7 +16,7 @@ where
   hash = decode('$stripped_0x_address', 'hex');
 EOF
 
-current_addresses_data=$(AWS_PROFILE=production aws rds-data execute-statement --secret-arn arn:aws:secretsmanager:us-east-1:830681326651:secret:blockscout-kava-10-creds-2-vHdYae --resource-arn arn:aws:rds:us-east-1:830681326651:cluster:blockscout-kava-10 --sql "$get_current_addresses_data_sql" --database blockscout_kava_10 | jq .records[0] )
+current_addresses_data=$(AWS_PROFILE=production aws rds-data execute-statement --secret-arn arn:aws:secretsmanager:us-east-1:830681326651:secret:blockscout-fury-10-creds-2-vHdYae --resource-arn arn:aws:rds:us-east-1:830681326651:cluster:blockscout-fury-10 --sql "$get_current_addresses_data_sql" --database blockscout_fury_10 | jq .records[0] )
 
 current_fetched_coin_balance=$(echo $current_addresses_data | jq .[0]."stringValue")
 current_fetched_coin_balance_block_number=$(echo $current_addresses_data | jq .[1]."longValue")
