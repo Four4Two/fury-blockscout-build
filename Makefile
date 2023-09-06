@@ -20,7 +20,7 @@ vendor-blockscout:
 # build a development version docker image of the service
 build:
 	cd blockscout && \
-	docker build ./ -f Dockerfile -t ${IMAGE_NAME}:${LOCAL_IMAGE_TAG}
+	docker build . -f Dockerfile -t ${IMAGE_NAME}:${LOCAL_IMAGE_TAG}
 
 .PHONY: build-db-exporter
 # build the exporter image
